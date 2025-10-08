@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Art Gallery</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bs-body-font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        .theme-toggle {
+            border: none;
+            background: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .ascii-card {
+            background: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        
+        .ascii-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-wrap: break-word;
+            background: var(--bs-gray-100);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--bs-border-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ascii-art-egg {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 18%;
+        }
+        
+        [data-bs-theme="dark"] .ascii-art {
+            background: var(--bs-gray-800);
+            color: var(--bs-gray-100);
+        }
+        
+        .filter-section {
+            background: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .column-toggle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .column-toggle-btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, var(--bs-primary), #0d6dfd);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        [data-bs-theme="dark"] .stats-card {
+            background: linear-gradient(135deg, #5a67d8, #434190);
+        }
+        
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        
+        .ascii-card:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-section {
+                padding: 1rem;
+            }
+            
+            .column-toggle {
+                justify-content: center;
+            }
+            
+            .desktop-table {
+                display: none;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-cards {
+                display: none;
+            }
+        }
+        .zz {
+            font-size: calc(1.375rem + 1.5vw);
+            color: black;
+            text-decoration: none
+        }
+
+        .zz:hover {
+            background: #EEAECA;
+            background: linear-gradient(202deg,rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+            color: transparent;
+            background-clip: text;
+            font-size: calc(1.375rem + 1.5vw);
+            /*color: white;*/
+            text-decoration: none
+        }
+
+
+         [data-bs-theme="dark"] .zz  {
+            font-size: calc(1.375rem + 1.5vw);
+            color: white;
+            text-decoration: none
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a class="zz d-flex gap mb-0" href="https://github.com/xxspell">
+                <pre class="ascii-art-egg mb-1">▐▄• ▄ ▐▄• ▄ .▄▄ ·  ▄▄▄·▄▄▄ .▄▄▌  ▄▄▌
+ █▌█▌▪ █▌█▌▪▐█ ▀. ▐█ ▄█▀▄.▀·██•  ██•
+ ·██·  ·██· ▄▀▀▀█▄ ██▀·▐▀▀▪▄██▪  ██▪
+▪▐█·█▌▪▐█·█▌▐█▄▪▐█▐█▪·•▐█▄▄▌▐█▌▐▌▐█▌▐▌
+•▀▀ ▀▀•▀▀ ▀▀ ▀▀▀▀ .▀    ▀▀▀ .▀▀▀ .▀▀▀</pre>
+<!--                ASCII store-->
+            </a>
+
+            <div class="d-flex gap-2 align-items-center">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="view-mode" id="pagination-mode" value="pagination" checked>
+                    <label class="btn btn-outline-primary btn-sm" for="pagination-mode" title="Pagination View">
+                        <i class="bi bi-list-ul"></i> Pages
+                    </label>
+                    <input type="radio" class="btn-check" name="view-mode" id="scroll-mode" value="scroll">
+                    <label class="btn btn-outline-primary btn-sm" for="scroll-mode" title="Continuous Scroll">
+                        <i class="bi bi-arrow-down-circle"></i> Scroll
+                    </label>
+                </div>
+<!--                <button id="shuffle-btn" class="btn btn-outline-primary" title="Shuffle Randomly">-->
+<!--                    <i class="bi bi-shuffle"></i>-->
+<!--                    <span class="d-none d-sm-inline">Shuffle</span>-->
+<!--                </button>-->
+                <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+                    <i class="bi bi-sun-fill" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row" id="stats-container">
+            <!-- Stats will be inserted here -->
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="bi bi-funnel me-2"></i>
+                        Filters
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="filter-title" placeholder="Search by title...">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="filter-artist" placeholder="Search by artist...">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="filter-category" placeholder="Search by category...">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="filter-tags" placeholder="Search by tags...">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="bi bi-bar-chart me-2"></i>
+                        Size Filters
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="filter-min-size" placeholder="Min size (bytes)">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="filter-max-size" placeholder="Max size (bytes)">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="filter-min-width" placeholder="Min width">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="filter-max-width" placeholder="Max width">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column Toggles -->
+            <div class="mt-3">
+                <h6 class="mb-2">Show Columns:</h6>
+                <div class="column-toggle" id="column-toggles">
+                    <!-- Column toggles will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <select class="form-select" id="sort-field">
+                        <option value="">Sort by...</option>
+                        <option value="id">ID</option>
+                        <option value="title">Title</option>
+                        <option value="size">Size</option>
+                        <option value="width">Width</option>
+                        <option value="height">Height</option>
+                        <option value="artist">Artist</option>
+                        <option value="category">Category</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="sort-order">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                        <button class="btn btn-primary flex-fill" id="apply-filters">
+                            <i class="bi bi-search me-2"></i>
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="desktop-table">
+            <div class="table-responsive">
+                <table class="table table-hover" id="data-table">
+                    <thead class="table-dark">
+                        <tr id="table-header">
+                            <!-- Headers will be inserted here -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="mobile-cards" id="mobile-cards">
+            <!-- Cards will be inserted here -->
+        </div>
+
+        <!-- Pagination -->
+        <nav id="pagination-container" class="mt-4" style="display: none;">
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Pagination will be inserted here -->
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let data = [];
+        let filteredData = [];
+        let renderCache = new Map();
+        let visibleColumns = {
+            id: true,
+            title: true,
+            art: true,
+            size: true,
+            width: true,
+            height: true,
+            artist: true,
+            tags: true,
+            category: true
+        };
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let viewMode = 'pagination'; // 'pagination' or 'scroll'
+        let scrollPosition = 0;
+        let visibleItems = [];
+        const scrollBatchSize = 50; // Number of items to render in scroll mode
+
+        // Theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Settings persistence
+        function saveSettings() {
+            const settings = {
+                viewMode,
+                visibleColumns,
+                filters: {
+                    title: document.getElementById('filter-title').value,
+                    artist: document.getElementById('filter-artist').value,
+                    category: document.getElementById('filter-category').value,
+                    tags: document.getElementById('filter-tags').value,
+                    minSize: document.getElementById('filter-min-size').value,
+                    maxSize: document.getElementById('filter-max-size').value,
+                    minWidth: document.getElementById('filter-min-width').value,
+                    maxWidth: document.getElementById('filter-max-width').value,
+                },
+                sortField: document.getElementById('sort-field').value,
+                sortOrder: document.getElementById('sort-order').value,
+            };
+            localStorage.setItem('asciiGallerySettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('asciiGallerySettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                viewMode = settings.viewMode || 'pagination';
+                visibleColumns = settings.visibleColumns || visibleColumns;
+                document.getElementById('filter-title').value = settings.filters?.title || '';
+                document.getElementById('filter-artist').value = settings.filters?.artist || '';
+                document.getElementById('filter-category').value = settings.filters?.category || '';
+                document.getElementById('filter-tags').value = settings.filters?.tags || '';
+                document.getElementById('filter-min-size').value = settings.filters?.minSize || '';
+                document.getElementById('filter-max-size').value = settings.filters?.maxSize || '';
+                document.getElementById('filter-min-width').value = settings.filters?.minWidth || '';
+                document.getElementById('filter-max-width').value = settings.filters?.maxWidth || '';
+                document.getElementById('sort-field').value = settings.sortField || '';
+                document.getElementById('sort-order').value = settings.sortOrder || 'asc';
+                document.querySelector(`input[name="view-mode"][value="${viewMode}"]`).checked = true;
+                createColumnToggles();
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.className = theme === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+        }
+
+        // Column visibility management
+        function createColumnToggles() {
+            const container = document.getElementById('column-toggles');
+            const columns = [
+                { key: 'id', label: 'ID' },
+                { key: 'title', label: 'Title' },
+                { key: 'art', label: 'Art' },
+                { key: 'size', label: 'Size' },
+                { key: 'width', label: 'Width' },
+                { key: 'height', label: 'Height' },
+                { key: 'artist', label: 'Artist' },
+                { key: 'tags', label: 'Tags' },
+                { key: 'category', label: 'Category' }
+            ];
+
+            container.innerHTML = '';
+            columns.forEach(col => {
+                const button = document.createElement('button');
+                button.className = `btn column-toggle-btn ${visibleColumns[col.key] ? 'btn-primary' : 'btn-outline-secondary'}`;
+                button.innerHTML = col.label;
+                button.onclick = () => toggleColumn(col.key, button);
+                container.appendChild(button);
+            });
+        }
+
+        function toggleColumn(columnKey, button) {
+            visibleColumns[columnKey] = !visibleColumns[columnKey];
+            button.className = `btn column-toggle-btn ${visibleColumns[columnKey] ? 'btn-primary' : 'btn-outline-secondary'}`;
+            updateDisplay();
+            saveSettings();
+        }
+
+        // Data loading and management
+        async function loadData() {
+            try {
+                const response = await fetch('ascii_data.json');
+                data = await response.json();
+                filteredData = [...data];
+                updateStats();
+                createColumnToggles();
+                updateDisplay();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('Failed to load ASCII art data');
+            }
+        }
+
+        function updateStats() {
+            const container = document.getElementById('stats-container');
+            const totalItems = data.length;
+            const totalSize = data.reduce((sum, item) => sum + item.size, 0);
+            const categories = [...new Set(data.map(item => item.category))].length;
+
+            container.innerHTML = `
+                <div class="col-md-4 mb-4">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-1">${totalItems.toLocaleString()}</h3>
+                            <small>Total Artworks</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-1">${(totalSize / 1024).toFixed(1)} KB</h3>
+                            <small>Total Size</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-1">${categories}</h3>
+                            <small>Categories</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Copy functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('ASCII art copied to clipboard!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('ASCII art copied to clipboard!', 'success');
+            });
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type}" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.innerHTML = toastHtml;
+            document.body.appendChild(container);
+
+            const toast = new bootstrap.Toast(container.querySelector('.toast'));
+            toast.show();
+
+            setTimeout(() => {
+                document.body.removeChild(container);
+            }, 3000);
+        }
+
+        function showError(message) {
+            showToast(message, 'danger');
+        }
+
+        // Shuffle functionality
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Display functions
+        function updateDisplay() {
+            applyFiltersAndSort();
+        }
+
+        function createTableHeader() {
+            const header = document.getElementById('table-header');
+            const columns = [
+                { key: 'id', label: 'ID' },
+                { key: 'title', label: 'Title' },
+                { key: 'art', label: 'Art' },
+                { key: 'size', label: 'Size' },
+                { key: 'width', label: 'Width' },
+                { key: 'height', label: 'Height' },
+                { key: 'artist', label: 'Artist' },
+                { key: 'tags', label: 'Tags' },
+                { key: 'category', label: 'Category' }
+            ];
+
+            header.innerHTML = '';
+            columns.forEach(col => {
+                if (visibleColumns[col.key]) {
+                    const th = document.createElement('th');
+                    th.textContent = col.label;
+                    th.className = 'text-nowrap';
+                    header.appendChild(th);
+                }
+            });
+        }
+
+
+        function displayData(items) {
+            createTableHeader();
+
+            if (viewMode === 'pagination') {
+                // Pagination mode
+                const totalPages = Math.ceil(items.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = items.slice(startIndex, endIndex);
+
+                displayTable(paginatedItems);
+                displayMobileCards(paginatedItems);
+                updatePagination(totalPages);
+            } else {
+                // Scroll mode - load in batches
+                if (scrollPosition === 0) {
+                    visibleItems = items.slice(0, scrollBatchSize);
+                    scrollPosition = scrollBatchSize;
+                }
+                displayTable(visibleItems);
+                displayMobileCards(visibleItems);
+                updatePagination(0); // Hide pagination
+            }
+        }
+
+        function loadMoreScroll() {
+            const nextBatch = filteredData.slice(scrollPosition, scrollPosition + scrollBatchSize);
+            visibleItems = visibleItems.concat(nextBatch);
+            scrollPosition += scrollBatchSize;
+            displayTable(visibleItems);
+            displayMobileCards(visibleItems);
+        }
+
+        function updatePagination(totalPages) {
+            const container = document.getElementById('pagination-container');
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1 || viewMode === 'scroll') {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            pagination.innerHTML = '';
+
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
+            pagination.appendChild(prevLi);
+
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
+            pagination.appendChild(nextLi);
+        }
+
+        function changePage(newPage) {
+            if (newPage < 1 || newPage > Math.ceil(filteredData.length / itemsPerPage)) return;
+            currentPage = newPage;
+            displayData(filteredData);
+        }
+
+        // Optimized rendering with caching
+        function getCachedRender(key, renderFunction) {
+            if (renderCache.has(key)) {
+                return renderCache.get(key);
+            }
+            const result = renderFunction();
+            renderCache.set(key, result);
+            // Limit cache size
+            if (renderCache.size > 100) {
+                const firstKey = renderCache.keys().next().value;
+                renderCache.delete(firstKey);
+            }
+            return result;
+        }
+
+        function displayTable(items) {
+            const sortField = document.getElementById('sort-field').value;
+            const sortOrder = document.getElementById('sort-order').value;
+            const cacheKey = `table-${viewMode}-${currentPage}-${items.length}-${JSON.stringify(visibleColumns)}-${sortField}-${sortOrder}`;
+            const tbody = document.getElementById('table-body');
+            
+            const renderFunction = () => {
+                tbody.innerHTML = '';
+
+                if (items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">No items found</td></tr>';
+                    return tbody.innerHTML;
+                }
+
+                items.forEach(item => {
+                    const row = document.createElement('tr');
+                    const cells = [];
+
+                    if (visibleColumns.id) cells.push(`<td class="text-nowrap">${item.id}</td>`);
+                    if (visibleColumns.title) cells.push(`<td class="fw-bold">${escapeHtml(item.title)}</td>`);
+                    if (visibleColumns.art) {
+                        cells.push(`<td class="text-center">
+                            <div class="position-relative">
+                                <pre class="ascii-art mb-1" style="font-size: 0.75rem; max-height: 700px;">${item.art}</pre>
+                                <button class="btn btn-sm btn-outline-primary copy-btn position-absolute top-0 end-0"
+                                        onclick="copyToClipboard(\`${item.art.replace(/`/g, '\\`')}\`)"
+                                        title="Copy ASCII Art">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </td>`);
+                    }
+                    if (visibleColumns.size) cells.push(`<td class="text-nowrap">${item.size.toLocaleString()}</td>`);
+                    if (visibleColumns.width) cells.push(`<td class="text-center">${item.width}</td>`);
+                    if (visibleColumns.height) cells.push(`<td class="text-center">${item.height}</td>`);
+                    if (visibleColumns.artist) cells.push(`<td class="text-nowrap">${escapeHtml(item.artist)}</td>`);
+                    if (visibleColumns.tags) cells.push(`<td><span class="badge bg-secondary">${item.tags.join('</span> <span class="badge bg-secondary">')}</span></td>`);
+                    if (visibleColumns.category) cells.push(`<td class="text-nowrap">${escapeHtml(item.category)}</td>`);
+
+                    row.innerHTML = cells.join('');
+                    tbody.appendChild(row);
+                });
+                return tbody.innerHTML;
+            };
+
+            tbody.innerHTML = getCachedRender(cacheKey, renderFunction);
+        }
+
+        function displayMobileCards(items) {
+            const sortField = document.getElementById('sort-field').value;
+            const sortOrder = document.getElementById('sort-order').value;
+            const cacheKey = `cards-${viewMode}-${currentPage}-${items.length}-${JSON.stringify(visibleColumns)}-${sortField}-${sortOrder}`;
+            const container = document.getElementById('mobile-cards');
+            
+            const renderFunction = () => {
+                container.innerHTML = '';
+
+                if (items.length === 0) {
+                    container.innerHTML = '<div class="col-12"><p class="text-center py-4">No items found</p></div>';
+                    return container.innerHTML;
+                }
+
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'col-12 col-md-6 col-lg-4 mb-3';
+                    card.innerHTML = `
+                        <div class="card ascii-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-0">${escapeHtml(item.title)}</h6>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard(\`${item.art.replace(/`/g, '\\`')}\`)" title="Copy ASCII Art">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                                <div class="ascii-art mb-3" style="font-size: 0.75rem; max-height: 500px;">${item.art}</div>
+                                <div class="row text-sm">
+                                    ${visibleColumns.artist ? `<div class="col-6"><strong>Artist:</strong><br>${escapeHtml(item.artist)}</div>` : ''}
+                                    ${visibleColumns.category ? `<div class="col-6"><strong>Category:</strong><br>${escapeHtml(item.category)}</div>` : ''}
+                                    ${visibleColumns.size ? `<div class="col-6"><strong>Size:</strong><br>${item.size}</div>` : ''}
+                                    ${visibleColumns.width ? `<div class="col-6"><strong>Dimensions:</strong><br>${item.width}×${item.height}</div>` : ''}
+                                </div>
+                                ${visibleColumns.tags ? `
+                                    <div class="mt-2">
+                                        ${item.tags.map(tag => `<span class="badge bg-secondary me-1">${escapeHtml(tag)}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                return container.innerHTML;
+            };
+
+            container.innerHTML = getCachedRender(cacheKey, renderFunction);
+        }
+
+        // Loading indicator
+        function showLoading(show = true) {
+            const button = document.getElementById('apply-filters');
+            if (show) {
+                button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Filtering...';
+                button.disabled = true;
+            } else {
+                button.innerHTML = '<i class="bi bi-search me-2"></i>Apply Filters';
+                button.disabled = false;
+            }
+        }
+
+        // Optimized filtering with Web Worker-like approach
+        function applyFiltersAndSort() {
+            showLoading(true);
+            
+            // Use requestAnimationFrame for smooth UI
+            requestAnimationFrame(() => {
+                let filtered = data.filter(item => {
+                    const titleMatch = !document.getElementById('filter-title').value ||
+                        item.title.toLowerCase().includes(document.getElementById('filter-title').value.toLowerCase());
+                    const artistMatch = !document.getElementById('filter-artist').value ||
+                        item.artist.toLowerCase().includes(document.getElementById('filter-artist').value.toLowerCase());
+                    const categoryMatch = !document.getElementById('filter-category').value ||
+                        item.category.toLowerCase().includes(document.getElementById('filter-category').value.toLowerCase());
+                    const tagsMatch = !document.getElementById('filter-tags').value ||
+                        item.tags.some(tag => tag.toLowerCase().includes(document.getElementById('filter-tags').value.toLowerCase()));
+                    
+                    const minSize = parseInt(document.getElementById('filter-min-size').value) || 0;
+                    const maxSize = parseInt(document.getElementById('filter-max-size').value) || Infinity;
+                    const sizeMatch = item.size >= minSize && item.size <= maxSize;
+                    
+                    const minWidth = parseInt(document.getElementById('filter-min-width').value) || 0;
+                    const maxWidth = parseInt(document.getElementById('filter-max-width').value) || Infinity;
+                    const widthMatch = item.width >= minWidth && item.width <= maxWidth;
+                    
+                    return titleMatch && artistMatch && categoryMatch && tagsMatch && sizeMatch && widthMatch;
+                });
+
+                const sortField = document.getElementById('sort-field').value;
+                const sortOrder = document.getElementById('sort-order').value;
+
+                if (sortField) {
+                    filtered.sort((a, b) => {
+                        let aVal = a[sortField];
+                        let bVal = b[sortField];
+                        if (typeof aVal === 'string') {
+                            aVal = aVal.toLowerCase();
+                            bVal = bVal.toLowerCase();
+                        }
+                        if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
+                        if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                }
+
+                filteredData = filtered;
+                currentPage = 1;
+                scrollPosition = 0;
+                visibleItems = [];
+
+                // Clear cache when data changes significantly
+                if (filtered.length < 1000) {
+                    renderCache.clear();
+                }
+
+                displayData(filtered);
+                showLoading(false);
+                saveSettings();
+            });
+        }
+
+
+        // Utility functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        function initializeEventListeners() {
+            document.getElementById('apply-filters').addEventListener('click', applyFiltersAndSort);
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            // document.getElementById('shuffle-btn').addEventListener('click', () => {
+            //     filteredData = shuffleArray(filteredData);
+            //     currentPage = 1; // Reset to first page when shuffling
+            //     scrollPosition = 0;
+            //     visibleItems = [];
+            //     displayData(filteredData);
+            //     showToast('Shuffled randomly!', 'info');
+            // });
+
+            // View mode toggle
+            document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    viewMode = e.target.value;
+                    currentPage = 1; // Reset to first page when changing view mode
+                    scrollPosition = 0;
+                    visibleItems = [];
+                    displayData(filteredData);
+                    saveSettings();
+                });
+            });
+
+            // Scroll event for infinite scroll in scroll mode
+            window.addEventListener('scroll', () => {
+                if (viewMode === 'scroll' && scrollPosition < filteredData.length) {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const windowHeight = window.innerHeight;
+                    const documentHeight = document.body.scrollHeight;
+                    if (scrollTop + windowHeight >= documentHeight - 100) { // Load more when near bottom
+                        loadMoreScroll();
+                    }
+                }
+            });
+
+            // Real-time filtering
+            ['filter-title', 'filter-artist', 'filter-category', 'filter-tags', 'filter-min-size', 'filter-max-size', 'filter-min-width', 'filter-max-width'].forEach(id => {
+                document.getElementById(id).addEventListener('input', debounce(applyFiltersAndSort, 300));
+            });
+
+            document.getElementById('sort-field').addEventListener('change', () => {
+                applyFiltersAndSort();
+                saveSettings();
+            });
+            document.getElementById('sort-order').addEventListener('change', () => {
+                applyFiltersAndSort();
+                saveSettings();
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            loadSettings();
+            initializeEventListeners();
+            loadData();
+        });
+    </script>
+</body>
+</html>
